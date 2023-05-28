@@ -101,12 +101,8 @@ def get_common_symptoms():
     res = []
     for i in temp:
         res.append(i.replace('_',' ').strip())
-    result = []
-    for i in res:
-        t = {}
-        t['name'] = i
-        result.append(t)
-    return result
+        
+    return res
 
 def get_disease_data():
     disease_data = {}
@@ -191,14 +187,11 @@ def diagnosis(vector, dictionary_symptoms):
             for j in i:
                 if j > 0.2:
                     print(dictionary[i.index(j)])
-                    t = {}
-                    t['name'] = dictionary[i.index(j)]
-                    res.append(t)
+                    res.append(dictionary[i.index(j)])
         return res
 
 data = get_data()
-
-get_disease_data()
+common_symptoms = get_common_symptoms()
 
 @app.before_request
 def initialize():
@@ -206,7 +199,54 @@ def initialize():
     embeddings = OpenAIEmbeddings()
     vectordb = Chroma(persist_directory = "chroma/", embedding_function = embeddings)
     g.qa = RetrievalQA.from_chain_type(llm=OpenAI(), chain_type="stuff", retriever=vectordb.as_retriever())
+
+
+@app.route("/getSymptoms")
+def Symptoms():
+    if len(active_symptoms)==0:
+        response = {'recommender' : common_symptoms}
+        return jsonify(response)
     
+    disease_data = get_disease_data()
+    display_symptoms = []
+    fail = 0
+    pred_class = ""
+    response = ""
+    probabilities, termination_flag = compute_probability(active_symptoms, disease_data)
+    print(probabilities)
+
+    if(len(active_symptoms)>=5):
+        vector, dictionary = get_active_symptoms()
+        result = diagnosis(vector,dictionary)
+        active_symptoms.clear()
+        response = {'diagnosis' : result}
+        return response
+
+    if(pred_class == "NotDetected"):
+        fail += 1
+    else:
+        fail = 0
+
+    display_symptoms = recommender_system(probabilities, active_symptoms, disease_data, fail)
+
+    response = {'recommender' : display_symptoms}
+
+    return jsonify(response)
+
+@app.route('/recommender')
+def recommender():
+    label = request.args.get('symptom', '')
+
+    if label in active_symptoms:
+        active_symptoms.remove(label)
+    else:
+        active_symptoms.append(label)
+
+    print(active_symptoms)
+
+    return [{}]
+
+
 
 @app.route('/append')
 def append():
@@ -234,34 +274,6 @@ def append():
     # return jsonify(res)
 
 
-@app.route('/appendpb')
-def appendpb():
-    label = request.args.get('a', '')
-
-    if label in active_symptoms:
-        active_symptoms.remove(label)
-    else:
-        active_symptoms.append(label)
-
-    print(active_symptoms)
-
-    # if(len(active_symptoms)>=5):
-    #     vector, dictionary = get_active_symptoms()
-    #     res = diagnosis(vector,dictionary)
-    #     active_symptoms.clear()
-    #     return res
-    
-    res = []
-    for i in active_symptoms:
-        t = {}
-        t['name'] = i
-        res.append(t)
-        
-    return jsonify(res)
-
-
-
-
 @app.route('/search')
 def search():
     query = request.args.get('q', '')
@@ -273,62 +285,6 @@ def search():
             results.append(item)
     return jsonify(results)
 
-common_symptoms = get_common_symptoms()
-
-@app.route('/top')
-def top():
-    return jsonify(common_symptoms)
-
-
-@app.route('/main')
-def main_loop():
-    disease_data = get_disease_data()
-    display_symptoms = []
-    # diagnosed = []
-    fail = 0
-    res = []
-
-    pred_class = ""
-    response = ""
-    
-    probabilities, termination_flag = compute_probability(active_symptoms, disease_data)
-
-    print(probabilities)
-
-    if(len(active_symptoms)>=5):
-        # for key, value in probabilities.items():
-        #     if value >= THRESHOLD:
-        #         diagnosed.append(key)
-        vector, dictionary = get_active_symptoms()
-        res = diagnosis(vector,dictionary)
-        active_symptoms.clear()
-        res1 = [{'name' : "terminate"}]
-        
-
-        for i in res:
-            t = {}
-            t['name'] = i
-            res1.append(t)
-            
-        return res1
-
-    
-
-    if(pred_class == "NotDetected"):
-        fail += 1
-    else:
-        fail = 0
-
-    display_symptoms = recommender_system(probabilities, active_symptoms, disease_data, fail)
-
-    for i in display_symptoms:
-        t = {}
-        t['name'] = i
-        res.append(t)
-
-
- 
-    return jsonify(res)
 
 
 
@@ -339,12 +295,12 @@ fail = 0
 def index():
     return "Hello"
 
-@app.route("/response")
-def get_bot_response():
-    userText = request.args.get('msg')
-    print(userText)
-    result = g.qa.run(userText)
-    return result
+# @app.route("/response")
+# def get_bot_response():
+#     userText = request.args.get('msg')
+#     print(userText)
+#     result = g.qa.run(userText)
+#     return result
 
 if __name__ == '__main__':
-    app.run(port=8005)
+    app.run(debug=True,port=8005)
