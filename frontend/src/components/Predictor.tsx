@@ -13,43 +13,45 @@ interface LandingProps{
 
 const Predictor:FC<LandingProps> = ({ showNextPage }) => {
 
-
     const [symptoms,setsymptom] = useState<Symptom>({
         recommender: [],
         diagnosis: [],
       });
+
     const [checkedSymptoms, setCheckedSymptoms] = useState<string[]>([]);
+
     const [count,setcount] = useState(5);
 
     const fadeInFromRightProps = useSpring({
-        from: { opacity: 0, transform: 'translateX(200px)' },
+        from: { opacity: 0,  },
         to: { opacity: 1, transform: 'translateX(0)' },
         config: { duration: 1000 },
     });      
 
     const fadeInFromLeftProps = useSpring({
-        from: { opacity: 0, transform: 'translateX(-200px)' },
+        from: { opacity: 0,  },
         to: { opacity: 1, transform: 'translateX(0)' },
         config: { duration: 1000 },
-        delay: 500,
+        delay: 1000,
     });
 
     const fadeinTable = useSpring({
         from: { opacity: 0},
         to: { opacity: 1},
         config: { duration: 1000 },
-        delay: 1200,
+        delay: 1500,
     });
 
     const fadeinDiagnosis = useSpring({
         from: { opacity: 0},
-        to: { opacity: 1},
+        to: { opacity: count == 0 ? 1 : 0},
         config: { duration: 1000 },
+        delay : 1000,
     })
 
     const fadeOut = useSpring({
         from: { opacity: 1 },
-        to: { opacity: count === 0 ? 0 : 1 },
+        to: { opacity: count == 0 ? 0 : 1 },
         config: { duration: 1000 },
     });
 
@@ -57,12 +59,12 @@ const Predictor:FC<LandingProps> = ({ showNextPage }) => {
         from: { opacity: 0},
         to: { opacity: 1},
         config: { duration: 1000 },
-        delay: 2200,
+        delay: 2500,
     });
 
     const fetchSymptoms = async () => {
         try{
-            const list = await fetch('https://127.0.0.1:8005/getSymptoms');
+            const list = await fetch('http://127.0.0.1:8005/getSymptoms');
             const jsonData = await list.json();
             'diagnosis' in jsonData ? (console.log(jsonData.diagnosis)) : (console.log(jsonData.recommender));
             'diagnosis' in jsonData ? (setsymptom((prev) => ({ ...prev, diagnosis: jsonData.diagnosis }))) : (setsymptom((prev) => ({ ...prev, recommender: jsonData.recommender })))
@@ -102,42 +104,40 @@ const Predictor:FC<LandingProps> = ({ showNextPage }) => {
                 <h1>Disease Predictor</h1>
             </animated.div>
     
-            <animated.div style={{color: 'white', marginTop: '0', ...(count === 0 ? fadeOut : fadeInFromLeftProps) }}>
-                <h2>Please select at least {count} symptoms</h2>
+            <animated.div style={{color: 'white', marginTop: '0', ...(count == 0 ? fadeOut : fadeInFromLeftProps) }}>
+                {count < 5 ? (<h2>Select {count} more symptoms</h2>) : (<h2>Please select at least {count} symptoms</h2>)}   
             </animated.div>
 
             <Spacer />
 
-            {count === 0 && (
-                <>
-                    <animated.table style={fadeinDiagnosis}>
-                        <tbody>
-                            <tr>
+            {count == 0 && (
+                <animated.table style={fadeinDiagnosis}>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <h1 style={{ color: 'white', textAlign: 'center' }}>You Probably one of these diseases</h1>
+                            </td>
+                        </tr>
+                        {symptoms.diagnosis.map((symptom) => (
+                            <tr key={symptom}>
                                 <td>
-                                    <h1 style={{ color: 'white', textAlign: 'center' }}>You Probably one of these diseases</h1>
+                                    <h2 style={{ color: 'white', textAlign: 'center' }}>{symptom}</h2>
                                 </td>
                             </tr>
-                            {symptoms.diagnosis.map((symptom) => (
-                                <tr key={symptom}>
-                                    <td>
-                                        <h2 style={{ color: 'white', textAlign: 'center' }}>{symptom}</h2>
-                                    </td>
-                                </tr>
-                            ))}
-                            <Spacer />
-                            <tr>
-                                <td style={{display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                    <animated.div style={fadeinDiagnosis}>
-                                        <Button shadow color="success" onPress={showNextPage} auto>Continue to chat</Button>
-                                    </animated.div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </animated.table>
-                </>
+                        ))}
+                        <Spacer />
+                        <tr>
+                            <td style={{display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                <animated.div style={fadeinDiagnosis}>
+                                    <Button shadow color="success" onPress={showNextPage} auto>Continue to chat</Button>
+                                </animated.div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </animated.table>
             )}
 
-            <animated.table style={count === 0 ? fadeOut : fadeinTable}>
+            <animated.table style={count == 0 ? fadeOut : fadeinTable}>
                 <tbody>
                 {symptoms.diagnosis.length<=0 && (
                     <>
@@ -174,7 +174,7 @@ const Predictor:FC<LandingProps> = ({ showNextPage }) => {
                 </tbody>
             </animated.table>
             
-            <animated.div style={{...fadeinButton, ...(count === 0 ? fadeOut : fadeinTable)}}>
+            <animated.div style={count == 0 ? fadeOut : fadeinButton}>
                 <Button color='error' onPress={fetchSymptoms} auto ghost>More Symptoms</Button>
             </animated.div>
 
