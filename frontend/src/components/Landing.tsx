@@ -1,14 +1,14 @@
 import { animated, useSpring } from '@react-spring/web';
 import { FC, useState } from 'react';
-import './button.css'
+import { useNavigate } from 'react-router-dom';
+import './button.css';
 
-interface LandingProps{
-  showNextPage: () => void;
-}
-
-const LandingPage:FC<LandingProps> = ({ showNextPage }) => {
+const LandingPage:FC = () => {
   const [showContinueButton, setShowContinueButton] = useState(false);
   const [fadeOut, setFadeOut] = useState(false);
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const navigate = useNavigate();
 
   const fadeInProps = useSpring({
     from: { opacity: 0, transform : 'translateY(0px)' },
@@ -34,7 +34,7 @@ const LandingPage:FC<LandingProps> = ({ showNextPage }) => {
 
   const handleContinue = () => {
     setFadeOut(true);
-    showNextPage();
+    navigate('/choose');
   };
 
   return (
