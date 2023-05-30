@@ -1,17 +1,14 @@
 import { Button, Checkbox, Spacer } from '@nextui-org/react';
 import { animated, useSpring } from '@react-spring/web';
 import { FC, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface Symptom{
     recommender: string[];
     diagnosis: string[];
 }
 
-interface LandingProps{
-    showNextPage: () => void;
-}
-
-const Predictor:FC<LandingProps> = ({ showNextPage }) => {
+const Predictor:FC= () => {
 
     const [symptoms,setsymptom] = useState<Symptom>({
         recommender: [],
@@ -21,6 +18,9 @@ const Predictor:FC<LandingProps> = ({ showNextPage }) => {
     const [checkedSymptoms, setCheckedSymptoms] = useState<string[]>([]);
 
     const [count,setcount] = useState(5);
+
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const navigate = useNavigate();
 
     const fadeInFromRightProps = useSpring({
         from: { opacity: 0,  },
@@ -61,6 +61,10 @@ const Predictor:FC<LandingProps> = ({ showNextPage }) => {
         config: { duration: 1000 },
         delay: 2500,
     });
+
+    const Navigate = () => {
+        navigate('/chat')
+    };
 
     const fetchSymptoms = async () => {
         try{
@@ -129,7 +133,7 @@ const Predictor:FC<LandingProps> = ({ showNextPage }) => {
                         <tr>
                             <td style={{display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                 <animated.div style={fadeinDiagnosis}>
-                                    <Button shadow color="success" onPress={showNextPage} auto>Continue to chat</Button>
+                                    <Button shadow color="success" onPress={Navigate} auto>Continue to chat</Button>
                                 </animated.div>
                             </td>
                         </tr>

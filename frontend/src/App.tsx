@@ -1,25 +1,18 @@
-import { useState } from "react"
-// import Landing from "./components/Landing"
-import Predictor from "./components/Predictor"
+import Landing from "./components/Landing"
+import Predictor from "./components/Predictor";
+import Selector from "./components/Selector";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 function App() {
-
-  const [currentPage,setcurrentPage] = useState('landing');
-
-  // const goToPredictor = () => {
-  //   setcurrentPage('Predictor');
-  // };
-
-  const goTochat = () => {
-    setcurrentPage('Chat');
-  };
-
   return (
     <>
-      {/* {currentPage=='landing' && (<Landing showNextPage={goToPredictor} />)}
-      {currentPage=='Predictor' && (<Predictor showNextPage={goTochat}/>)} */}
-      <Predictor showNextPage={goTochat}/>
-      {currentPage}
+      <Router>
+        <Routes>
+          <Route path='/' element={<Landing />} />
+          <Route path='/choose' element={<Selector />} />
+          <Route path='/probability' element={<Predictor />} />
+        </Routes>
+      </Router>
     </>
   )
 }
