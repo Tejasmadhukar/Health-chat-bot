@@ -45,7 +45,7 @@ const LandingPage:FC = () => {
                 {showContinueButton  && (
                     <animated.div style={buttonFadeInProps}>
                         <div style={{ display: 'flex', justifyContent: 'center' }}>
-                          <button className="glow-on-hover" onClick={handleContinue} type="button">Click me to continue !</button>
+                          <button  className="glow-on-hover" onClick={handleContinue} type="button">Click me to continue !</button>
                         </div>
                     </animated.div>
                 )}

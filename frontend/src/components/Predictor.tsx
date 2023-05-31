@@ -179,7 +179,7 @@ const Predictor:FC= () => {
             </animated.table>
             
             <animated.div style={count == 0 ? fadeOut : fadeinButton}>
-                <Button color='error' onPress={fetchSymptoms} auto ghost>More Symptoms</Button>
+                <Button color='error' onPress={fetchSymptoms} auto >More Symptoms</Button>
             </animated.div>
 
         </div>
