@@ -14,8 +14,12 @@ const Selector:FC = () => {
         navigate('/probability')
     }
 
+    const navRight = () => {
+        navigate('/network')
+    }
+
     const fadeinButton = useSpring({
-        from: { opacity: 0,  },
+        from: { opacity: 0 },
         to: { opacity: 1 },
         config: { duration: 1000 },
     });      
@@ -63,7 +67,8 @@ const Selector:FC = () => {
                         <td>
                             <Button color="error"
                                 onMouseEnter={() => {setButtonHover('RightButton')}} 
-                                onMouseLeave={() => {setButtonHover('')}} auto ghost>
+                                onMouseLeave={() => {setButtonHover('')}} 
+                                onPress={navRight} auto ghost>
                                     Neural Network Disease Predictor
                             </Button>
                         </td>

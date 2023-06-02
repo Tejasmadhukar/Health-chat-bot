@@ -63,7 +63,7 @@ def Symptoms():
 
 @app.route('/recommender')
 def recommender():
-    label = request.args.get('symptom', '')
+    label = request.args.get('symptom')
 
     if label in active_symptoms:
         active_symptoms.remove(label)
@@ -76,31 +76,38 @@ def recommender():
 
 @app.route('/append')
 def append():
-    label = request.args.get('a', '')
-
+    label = request.args.get('symptom')
+    response = {}
     if label in active_symptoms:
         active_symptoms.remove(label)
+        response['removed'] = label
     else:
         active_symptoms.append(label)
+        response['added'] = label
 
     print(active_symptoms)
 
-    if(len(active_symptoms)>=5):
+    if(len(active_symptoms)>=3):
         vector, dictionary = get_active_symptoms(active_symptoms)
         res = diagnosis(vector,dictionary)
         active_symptoms.clear()
-        return res
+        response['diagnosis'] = res
+        return response
+    
+    return response
+    
     
 @app.route('/search')
 def search():
-    query = request.args.get('q', '')
+    query = request.args.get('search_symptom')
     results = []
-    for item in data:
+    for symptom in data:
         if query.lower() in active_symptoms:
             continue
-        if query.lower() in item['name'].lower():
-            results.append(item)
-    return jsonify(results)
+        if query.lower() in symptom.lower():
+            results.append(symptom)
+    response = {'search_results': results}
+    return jsonify(response)
 
 @app.route("/response")
 def get_bot_response():
