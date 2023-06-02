@@ -1,6 +1,8 @@
-import Landing from "./components/Landing"
-import Predictor from "./components/Predictor";
-import Selector from "./components/Selector";
+import Landing from "./pages/Landing"
+import Predictor from "./pages/Predictor";
+import Selector from "./pages/Selector";
+import Symptoms from "./pages/Symptoms";
+import Test from "./pages/test";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 function App() {
@@ -11,6 +13,8 @@ function App() {
           <Route path='/' element={<Landing />} />
           <Route path='/choose' element={<Selector />} />
           <Route path='/probability' element={<Predictor />} />
+          <Route path='/network' element={<Symptoms />} />
+          <Route path='*' element={<Test />} />
         </Routes>
       </Router>
     </>

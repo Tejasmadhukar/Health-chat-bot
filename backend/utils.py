@@ -20,13 +20,7 @@ def get_data():
         if i not in t1:
             t1.append(i.replace('_',' ').strip())
 
-    res = []
-    for i in t1:
-        t = {}
-        t['name'] = i
-        res.append(t)
-        
-    return res
+    return t1
 
 class Diagnose(nn.Module):
     def __init__(self, input_size, hidden_size, output_size):
