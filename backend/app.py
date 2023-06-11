@@ -109,12 +109,12 @@ def search():
     response = {'search_results': results}
     return jsonify(response)
 
-@app.route("/response")
+@app.route("/response", methods=["POST"])
 def get_bot_response():
-    userText = request.args.get('msg')
+    userText = request.json.get('message')
     print(userText)
     result = g.qa.run(userText)
-    return result
+    return {'text':result}
 
 if __name__ == '__main__':
     app.run(debug=True,port=8005)
