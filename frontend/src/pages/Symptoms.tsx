@@ -4,8 +4,8 @@ import { Button, Spacer } from "@nextui-org/react";
 import { animated, useSpring } from "@react-spring/web";
 import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import DeleteDocumentIcon from './components/DeleteDocumentIcon';
 import './Symptoms.css'
+import FadeinTitle from './components/FadeinTitle';
 
 const Symptoms = () => {
 
@@ -64,12 +64,6 @@ const Symptoms = () => {
         }
     }
 
-    const fadeinText = useSpring({
-        from: { opacity: 0 },
-        to: { opacity: 1 },
-        config: { duration: 1000 },
-    })
-
     const fadeinCounter = useSpring({
         from: { opacity: 0 },
         to: { opacity: 1 },
@@ -111,12 +105,9 @@ const Symptoms = () => {
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <animated.div style={fadeinText}>
-                <h1 style={{color:'white'}}>Disease predictor</h1>
-            </animated.div>
-
-
-
+            
+            <FadeinTitle title="Disease Predictor" />
+            
             <animated.div style={{color: 'white', marginTop: '0', ...(count == 0 ? fadeOut : fadeinCounter) }}>
                 {count < 3 ? (<h2>Select {count} more symptoms</h2>) : (<h2>Please select at least {count} symptoms</h2>)}   
             </animated.div>
@@ -182,7 +173,7 @@ const Symptoms = () => {
                                     <h3 style={{ color: 'white', textAlign: 'center' }}>{symptom}</h3>
                                 </td>
                                 <td>
-                                    <DeleteDocumentIcon size={22} fill='red' />
+                                    <h3>Add garbage icon here and make it animate</h3>
                                 </td>
                             </tr>
                         ))}
