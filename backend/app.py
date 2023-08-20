@@ -18,7 +18,7 @@ qa = RetrievalQA.from_chain_type(
     llm=OpenAI(), chain_type="stuff", retriever=vectordb.as_retriever())
 
 
-@app.route("/")
+@app.route("/") 
 def index():
     return "Health route"
 
