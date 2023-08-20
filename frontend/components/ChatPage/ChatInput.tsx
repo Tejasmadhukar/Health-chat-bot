@@ -1,66 +1,53 @@
 'use client'
-import { BotResponse, MessageGroup } from "@/types";
-import { Button } from "@nextui-org/button";
-import { Input } from "@nextui-org/input";
-import axios from "axios";
-import React, { useState } from "react";
-import { SendIcon } from "../icons";
+import { Spinner } from "@nextui-org/react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useRef } from "react";
+import ChatInput from "./ChatInput";
+import { Message } from "postcss";
+import TextMessage from "./Text";
 
-interface ChatInputProps {
-    onSendMessage: (message: MessageGroup) => void;
-    MessageLength: number;
-    Loading : (key: boolean) => void;
+async function getMessages(group: string) {
+    const res = await fetch(``);
+    if (!res.ok) {
+        console.log(res)
+    } else {
+        return await res.json()
+    }
 }
 
-const ChatInput: React.FC<ChatInputProps> = ({onSendMessage, MessageLength, Loading}) => {
-    const [message, setMessage] = useState('');
+export default function ChatPage() {
+    const bottomRef = useRef<HTMLDivElement>(null)
+    const queryClient = useQueryClient()
+    useEffect(()=>{
+        bottomRef.current?.scrollIntoView({behavior: 'smooth'});
+    },[])
 
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setMessage(event.target.value);
-    };
 
-    const FetchResponse = async (query: string) : Promise<BotResponse[]> => {
-        try {
-            const response = await axios.post('https://legal-similarity-search.onrender.com/run', { message: query }, { headers: { 'Content-Type': 'application/json' } });
-            return response.data ;
-        } catch (error) {
-            console.log(error);
-            throw error;
-        }
+    const ScrollintoView = () => {
+        bottomRef.current?.scrollIntoView({behavior: 'smooth'});
     }
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        if (message.trim() !== '') {
-            onSendMessage({message : message as string, user: 'human'});
-            setMessage('');
-            Loading(true);
-            FetchResponse(message).then((data)=>{
-                Loading(false);
-                onSendMessage({message: data, user: 'bot'});
-            }).catch((Error)=>alert(Error));
-        }
-    };
-      
+
+    const previousMessages = queryClient.getQueryData<Message[]>(['messages'])
+    const welcomeMessage:Message = {id: 'first', created_by: 'bot', content_message: 'You can query your files now !!', updated_at: new Date()} 
+
+    let updatedMessages:Message[] = []
+    if(previousMessages){
+        updatedMessages = [...previousMessages, welcomeMessage]
+    }
+    queryClient.setQueryData<Message[]>(['messages'], updatedMessages)
+    
+    
     return (
-        <div className="sticky bottom-1 z-20 bg-opacity-80 backdrop-filter">
-            <form onSubmit={handleSubmit} className="mx-2 gap-3 last:mb-2 md:mx-auto md:last:mb-6 lg:mx-auto lg:max-w-2xl xl:max-w-3xl">
-                <Input 
-                placeholder="Type your message here"
-                color="default"
-                onChange={handleChange}
-                value={message}
-                endContent={<Button
-                                isIconOnly
-                                variant="light"
-                                type="submit"
-                            >
-                                <SendIcon />
-                            </Button>}
-                />
-            </form>
+        <div className="flex w-full flex-col h-screen message group">
+            <div className="flex-1 overflow-y-auto">
+                {data.map((message,index)=>
+                    <TextMessage key={index} message={message}/>
+                )}
+                <div ref={bottomRef} />
+            </div>
+            
+            <ChatInput scrollFunction={ScrollintoView} groupId={groupId}/>
         </div>
     )
 }
-
-export default ChatInput;

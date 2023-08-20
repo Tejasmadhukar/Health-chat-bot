@@ -1,19 +1,13 @@
-import {SVGProps} from "react";
+import { SVGProps } from "react";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
 };
 
-export interface MessageGroup {
-  message: string | BotResponse[] | number,
-  user: string
-}
-
-export interface BotResponse {
-  Output : {
-    RelevanceScore : string,
-    FileName : string,
-    Facts : string,
-    CaseSummary : string
-  }
+export interface Message {
+  id: string;
+  created_by: string;
+  content_message: string;
+  groupId: string;
+  updated_at: Date;
 }
