@@ -5,5 +5,5 @@ torch
 langchain
 python-dotenv
 openai
-chromadb
+chromadb==0.3.29
 tiktoken
