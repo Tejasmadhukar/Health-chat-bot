@@ -6,6 +6,7 @@ from langchain.vectorstores import Chroma
 from langchain.llms import OpenAI
 from langchain.chains import RetrievalQA
 from dotenv import load_dotenv
+import json
 
 load_dotenv()
 app = Flask(__name__)
@@ -18,7 +19,7 @@ qa = RetrievalQA.from_chain_type(
     llm=OpenAI(), chain_type="stuff", retriever=vectordb.as_retriever())
 
 
-@app.route("/") 
+@app.route("/")
 def index():
     return "Health route"
 
@@ -27,6 +28,8 @@ def index():
 def get_bot_response():
     userText = request.json.get('message')
     result = qa.run(userText)
+    with open('temp.json', 'a') as w:
+        json.dump({'text': result}, w)
     return {'text': result}
 
 

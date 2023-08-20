@@ -11,3 +11,4 @@ __pycache__
 *.sln
 *.sw?
 .venv
+*.json
