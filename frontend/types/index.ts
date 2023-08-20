@@ -5,9 +5,8 @@ export type IconSvgProps = SVGProps<SVGSVGElement> & {
 };
 
 export interface Message {
-  id: string;
-  created_by: string;
-  content_message: string;
-  groupId: string;
+  id: string,
+  created_by: string,
+  content_message: string,
   updated_at: Date;
 }

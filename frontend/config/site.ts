@@ -67,3 +67,11 @@ export const siteConfig = {
     sponsor: "https://patreon.com/jrgarciadev"
 	},
 };
+
+let backendUrl = "http://127.0.0.1:80";
+
+if (process.env.NODE_ENV === "production") {
+  backendUrl = "http://146.190.9.149";
+}
+
+export { backendUrl };
