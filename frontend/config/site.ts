@@ -1,8 +1,8 @@
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
-	name: "Similarity search",
-	description: "Law made more accessible.",
+	name: "Health Chat Bot",
+	description: "Answers to all your health questions !!",
 	navItems: [
 		{
 			label: "Home",
