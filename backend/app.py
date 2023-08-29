@@ -27,6 +27,7 @@ def index():
 @app.route("/response", methods=["POST"])
 def get_bot_response():
     userText = request.json.get('message')
+    print(userText)
     result = qa.run(userText)
     with open('temp.json', 'a') as w:
         json.dump({'text': result}, w)
