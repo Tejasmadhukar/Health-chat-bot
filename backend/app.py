@@ -7,6 +7,7 @@ from langchain.llms import OpenAI
 from langchain.chains import RetrievalQA
 from dotenv import load_dotenv
 import json
+import os
 
 load_dotenv()
 app = Flask(__name__)
