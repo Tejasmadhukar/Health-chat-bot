@@ -28,12 +28,17 @@ def index():
 
 @app.route("/response", methods=["POST"])
 def get_bot_response():
-    userText = request.json.get("message")
-    print(userText)
-    result = qa.invoke(userText)
-    with open("temp.json", "a") as w:
-        json.dump({"text": result}, w)
-    return {"text": result}
+    try:
+        userText = request.json.get("message")
+        print(userText)
+        result = qa.invoke(userText)
+        with open("temp.json", "a") as w:
+            json.dump({"text": result}, w)
+        return {"text": result}
+    except Exception as e:
+        error_message = str(e)
+        print(f"Error: {error_message}")
+        return {"error": error_message}, 500
 
 
 if __name__ == "__main__":
